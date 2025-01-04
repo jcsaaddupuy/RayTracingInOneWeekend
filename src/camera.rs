@@ -1,5 +1,4 @@
 use core::f64;
-use std::ffi::c_float;
 
 use indicatif::ProgressBar;
 
@@ -9,9 +8,9 @@ use crate::hittable::{HitRecord, Hittable};
 use crate::interval::Interval;
 use crate::ray::Ray;
 
+use crate::rtweekend::random_f64;
 use crate::vec3::{Point3, Vec3};
-use log::debug;
-use rand::prelude::*;
+
 pub struct Camera {
     pub aspect_ratio: f64,      // Ratio of image width over height
     pub image_width: i32,       // Rendered image width in pixel count
@@ -23,6 +22,8 @@ pub struct Camera {
     pixel_delta_u: Vec3,      // Offset to pixel to the right
     pixel_delta_v: Vec3,      // Offset to pixel below
     pixel_samples_scale: f64, // Color scale factor for a sum of pixel samples
+
+    pub max_depth: i32, // Maximum number of ray bounces into scene
 }
 
 impl Camera {
@@ -63,13 +64,18 @@ impl Camera {
             pixel_delta_u,
             pixel_delta_v,
             pixel_samples_scale: 1.0 / (samples_per_pixel as f64),
+            max_depth: 50,
         };
     }
-    pub fn ray_color<T: Hittable>(&self, r: Ray, world: &T) -> Color {
+    pub fn ray_color<T: Hittable>(&self, r: Ray, world: &T, depth: i32) -> Color {
+        if depth <= 0 {
+            return Color::new(0.0, 0.0, 0.0);
+        }
         let mut rec: HitRecord = HitRecord::default();
 
-        if world.hit(r, Interval::new(0.0, f64::INFINITY), &mut rec) {
-            return 0.5 * (rec.normal + Color::new(1.0, 1.0, 1.0));
+        if world.hit(r, Interval::new(0.001, f64::INFINITY), &mut rec) {
+            let direction = Vec3::random_on_hemisphere(rec.normal);
+            return self.ray_color(Ray::new(rec.p, direction), world, depth - 1) * 0.5;
         }
 
         let unit_direction = r.direction().unit();
@@ -88,7 +94,7 @@ impl Camera {
 
                 for _sample in 0..self.samples_per_pixel {
                     let r = self.get_ray(i, j);
-                    pixel_color += self.ray_color(r, world);
+                    pixel_color += self.ray_color(r, world, self.max_depth);
                 }
                 color::write_color(self.pixel_samples_scale * pixel_color);
 
@@ -111,8 +117,7 @@ impl Camera {
     }
 
     fn sample_square(&self) -> Vec3 {
-        let mut rng = rand::thread_rng();
         // Returns the vector to a random point in the [-.5,-.5]-[+.5,+.5] unit square.
-        return Vec3::new(rng.gen::<f64>() - 0.5, rng.gen::<f64>() - 0.5, 0.0);
+        return Vec3::new(random_f64() - 0.5, random_f64() - 0.5, 0.0);
     }
 }

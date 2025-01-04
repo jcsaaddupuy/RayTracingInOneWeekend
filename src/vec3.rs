@@ -1,5 +1,7 @@
+use rand::prelude::*;
 use std::ops;
 
+use crate::rtweekend::{random_f64, random_f64_bounded};
 #[derive(Copy, Clone, Default, Debug)]
 pub struct Vec3 {
     e: [f64; 3],
@@ -26,6 +28,20 @@ impl Vec3 {
         self / self.length()
     }
 
+    pub fn random_unit() -> Vec3 {
+        let mut p;
+        let mut lensq;
+
+        loop {
+            p = Vec3::random_bounded(-1.0, 1.0);
+            lensq = p.length_squared();
+            if 1e-160 < lensq && lensq <= 1.0 {
+                break;
+            }
+        }
+        return p / f64::sqrt(lensq);
+    }
+
     pub fn length(self) -> f64 {
         f64::sqrt(self.length_squared())
     }
@@ -44,6 +60,29 @@ impl Vec3 {
             self.e[2] * other.e[0] - self.e[0] * other.e[2],
             self.e[0] * other.e[1] - self.e[1] * other.e[0],
         )
+    }
+
+    pub fn random() -> Vec3 {
+        Vec3 {
+            e: [random_f64(), random_f64(), random_f64()],
+        }
+    }
+    pub fn random_bounded(min: f64, max: f64) -> Vec3 {
+        Vec3 {
+            e: [
+                random_f64_bounded(min, max),
+                random_f64_bounded(min, max),
+                random_f64_bounded(min, max),
+            ],
+        }
+    }
+    pub fn random_on_hemisphere(normal: Vec3) -> Vec3 {
+        let on_unit_sphere: Vec3 = Vec3::random_unit();
+        if on_unit_sphere.dot(normal) > 0.0 {
+            // In the same hemisphere as the normal
+            return on_unit_sphere;
+        }
+        return -on_unit_sphere;
     }
 }
 impl ops::Add<Vec3> for Vec3 {
@@ -334,11 +373,9 @@ mod tests {
         assert_eq!(result.e[1], 3.0);
         assert_eq!(result.e[2], 4.0);
 
-
         let result = -v1;
         assert_eq!(result.e[0], -1.0);
         assert_eq!(result.e[1], -2.0);
         assert_eq!(result.e[2], -3.0);
-
     }
 }
