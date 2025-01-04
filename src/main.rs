@@ -26,10 +26,11 @@ fn main() {
 
     let aspect_ratio = 16.0 / 9.0;
     let image_width: i32 = 400;
+    let samples_per_pixel = 10;
 
-    let camera = Camera::new(image_width, aspect_ratio);
+    let camera = Camera::new(image_width, aspect_ratio, samples_per_pixel);
+    
     //World
-
     let mut world = HittableList::new();
 
     world.add(Sphere::new(Point3::new(0.0, 0.0, -1.0), 0.5));

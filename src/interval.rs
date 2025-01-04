@@ -19,6 +19,16 @@ impl Interval {
     pub fn surrounds(&self, x: f64) -> bool {
         return self.min < x && x < self.max;
     }
+
+    pub fn clamp(&self, x: f64) -> f64 {
+        if (x < self.min) {
+            return self.min;
+        };
+        if (x > self.max) {
+            return self.max;
+        };
+        return x;
+    }
 }
 
 const EMPTY: Interval = Interval::new(f64::INFINITY, -f64::INFINITY);
@@ -58,5 +68,12 @@ mod tests {
 
         assert_eq!(interval.contains(20.0), true);
         assert_eq!(interval.surrounds(20.0), false);
+    }
+
+    #[test]
+    fn test_clamp() {
+        let interval = Interval::new(10.0, 20.0);
+        assert_eq!(interval.clamp(1.0), 10.0);
+        assert_eq!(interval.clamp(21.0), 20.0);
     }
 }
