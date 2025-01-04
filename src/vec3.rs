@@ -1,7 +1,6 @@
-use std::fmt;
 use std::ops;
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Default, Debug)]
 pub struct Vec3 {
     e: [f64; 3],
 }
@@ -182,6 +181,13 @@ impl ops::Div<Vec3> for f64 {
     }
 }
 
+impl ops::Neg for Vec3 {
+    type Output = Vec3;
+    fn neg(self) -> Vec3 {
+        return -1.0 * self;
+    }
+}
+
 #[cfg(test)]
 mod tests {
     // Note this useful idiom: importing names from outer (for mod tests) scope.
@@ -327,5 +333,12 @@ mod tests {
         assert_eq!(result.e[0], 2.0);
         assert_eq!(result.e[1], 3.0);
         assert_eq!(result.e[2], 4.0);
+
+
+        let result = -v1;
+        assert_eq!(result.e[0], -1.0);
+        assert_eq!(result.e[1], -2.0);
+        assert_eq!(result.e[2], -3.0);
+
     }
 }
