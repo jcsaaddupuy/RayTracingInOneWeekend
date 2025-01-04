@@ -1,15 +1,9 @@
-use core::f64;
 
 use camera::Camera;
-use color::Color;
-use hittable::{HitRecord, Hittable};
 use hittable_list::HittableList;
-use indicatif::ProgressBar;
-use interval::Interval;
 use log::info;
-use ray::Ray;
 use sphere::Sphere;
-use vec3::{Point3, Vec3};
+use vec3::Point3;
 
 mod camera;
 mod color;

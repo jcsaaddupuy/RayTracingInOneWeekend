@@ -8,10 +8,10 @@ pub struct Sphere {
 
 impl Sphere {
     pub fn new(center: Point3, radius: f64) -> Sphere {
-        return Sphere {
+        Sphere {
             center,
             radius: f64::max(0.0, radius),
-        };
+        }
     }
 }
 
@@ -52,6 +52,6 @@ impl Hittable for Sphere {
         let outward_normal = (rec.p - self.center) / self.radius;
         rec.set_face_normal(r, outward_normal);
 
-        return true;
+        true
     }
 }

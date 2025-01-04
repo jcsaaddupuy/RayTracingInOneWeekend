@@ -54,7 +54,7 @@ impl Camera {
 
         let pixel00_loc = viewport_upper_left + 0.5 * (pixel_delta_u + pixel_delta_v);
 
-        return Camera {
+        Camera {
             aspect_ratio,
             image_width,
             samples_per_pixel,
@@ -65,7 +65,7 @@ impl Camera {
             pixel_delta_v,
             pixel_samples_scale: 1.0 / (samples_per_pixel as f64),
             max_depth: 50,
-        };
+        }
     }
     pub fn ray_color<T: Hittable>(&self, r: Ray, world: &T, depth: i32) -> Color {
         if depth <= 0 {
@@ -75,12 +75,12 @@ impl Camera {
 
         if world.hit(r, Interval::new(0.001, f64::INFINITY), &mut rec) {
             let direction = rec.normal + Vec3::random_unit();
-            return self.ray_color(Ray::new(rec.p, direction), world, depth - 1) * 0.5;
+            return self.ray_color(Ray::new(rec.p, direction), world, depth - 1) * 0.1;
         }
 
         let unit_direction = r.direction().unit();
         let a = 0.5 * (unit_direction.y() + 1.0);
-        return (1.0 - a) * Color::new(1.0, 1.0, 1.0) + a * Color::new(0.5, 0.7, 1.0);
+        (1.0 - a) * Color::new(1.0, 1.0, 1.0) + a * Color::new(0.5, 0.7, 1.0)
     }
 
     pub fn render<T: Hittable>(&self, world: &T) {
@@ -113,11 +113,11 @@ impl Camera {
         let ray_origin = self.center;
         let ray_direction = pixel_sample - ray_origin;
 
-        return Ray::new(ray_origin, ray_direction);
+        Ray::new(ray_origin, ray_direction)
     }
 
     fn sample_square(&self) -> Vec3 {
         // Returns the vector to a random point in the [-.5,-.5]-[+.5,+.5] unit square.
-        return Vec3::new(random_f64() - 0.5, random_f64() - 0.5, 0.0);
+        Vec3::new(random_f64() - 0.5, random_f64() - 0.5, 0.0)
     }
 }

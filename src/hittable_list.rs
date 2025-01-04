@@ -7,9 +7,9 @@ pub struct HittableList {
 
 impl HittableList {
     pub fn new() -> HittableList {
-        return HittableList {
+        HittableList {
             objects: Vec::new(),
-        };
+        }
     }
     pub fn add<'a, T: Hittable + 'static>(&mut self, obj: T) {
         self.objects.push(Box::new(obj));
@@ -20,7 +20,7 @@ impl HittableList {
 }
 
 impl Hittable for HittableList {
-    fn hit<'a>(&self, r: crate::ray::Ray, ray_t: Interval, rec: &'a mut HitRecord) -> bool {
+    fn hit(&self, r: crate::ray::Ray, ray_t: Interval, rec: &mut HitRecord) -> bool {
         let mut hit_anything = false;
         let mut closest_so_far = ray_t.max;
 
@@ -31,6 +31,6 @@ impl Hittable for HittableList {
             }
         }
 
-        return hit_anything;
+        hit_anything
     }
 }

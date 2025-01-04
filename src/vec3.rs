@@ -1,4 +1,3 @@
-use rand::prelude::*;
 use std::ops;
 
 use crate::rtweekend::{random_f64, random_f64_bounded};
@@ -39,7 +38,7 @@ impl Vec3 {
                 break;
             }
         }
-        return p / f64::sqrt(lensq);
+        p / f64::sqrt(lensq)
     }
 
     pub fn length(self) -> f64 {
@@ -82,7 +81,7 @@ impl Vec3 {
             // In the same hemisphere as the normal
             return on_unit_sphere;
         }
-        return -on_unit_sphere;
+        -on_unit_sphere
     }
 }
 impl ops::Add<Vec3> for Vec3 {
@@ -223,7 +222,7 @@ impl ops::Div<Vec3> for f64 {
 impl ops::Neg for Vec3 {
     type Output = Vec3;
     fn neg(self) -> Vec3 {
-        return -1.0 * self;
+        -1.0 * self
     }
 }
 
