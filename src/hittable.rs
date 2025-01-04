@@ -11,7 +11,7 @@ pub struct HitRecord {
     pub front_face: bool,
 }
 impl HitRecord {
-    pub fn set_face_normal(mut self, r: Ray, outward_normal: Vec3) {
+    pub fn set_face_normal(&mut self, r: Ray, outward_normal: Vec3) {
         // Sets the hit record normal vector.
         // NOTE: the parameter `outward_normal` is assumed to have unit length.
 

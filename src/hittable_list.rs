@@ -25,9 +25,8 @@ impl Hittable for HittableList {
         r: crate::ray::Ray,
         ray_tmin: f64,
         ray_tmax: f64,
-        mut rec: &'a mut HitRecord,
+        rec: &'a mut HitRecord,
     ) -> bool {
-        let mut temp_rec = HitRecord::default();
         let mut hit_anything = false;
         let mut closest_so_far = ray_tmax;
 
@@ -35,14 +34,6 @@ impl Hittable for HittableList {
             if obj.hit(r, ray_tmin, closest_so_far, rec) {
                 hit_anything = true;
                 closest_so_far = rec.t;
-                // print!("{:?}", rec.normal);
-                // rec = &mut temp_rec;
-                // rec.front_face = temp_rec.front_face;
-                // rec.t = temp_rec.t;
-                // rec.p = temp_rec.p;
-                // rec.normal = temp_rec.normal;
-
-                // rec.set_face_normal(r, temp_rec.normal);
             }
         }
 

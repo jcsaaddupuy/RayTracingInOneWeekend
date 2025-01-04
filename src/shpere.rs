@@ -50,16 +50,7 @@ impl Hittable for Sphere {
         rec.p = r.at(rec.t);
 
         let outward_normal = (rec.p - self.center) / self.radius;
-        // print!("{:?}", outward_normal);
-        // rec.set_face_normal(r, outward_normal);
-
-        rec.front_face = r.direction().dot(outward_normal) < 0.0;
-        if rec.front_face {
-            rec.normal = outward_normal;
-        } else {
-            rec.normal = -outward_normal;
-        }
-        // print!("after set_face_normal : {:?}", rec.normal);
+        rec.set_face_normal(r, outward_normal);
 
         return true;
     }
