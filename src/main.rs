@@ -1,7 +1,10 @@
+use core::f64;
+
 use color::Color;
 use hittable::{HitRecord, Hittable};
 use hittable_list::HittableList;
 use indicatif::ProgressBar;
+use interval::Interval;
 use log::info;
 use ray::Ray;
 use shpere::Sphere;
@@ -10,14 +13,16 @@ use vec3::{Point3, Vec3};
 mod color;
 mod hittable;
 mod hittable_list;
+mod interval;
 mod ray;
+mod rtweekend;
 mod shpere;
 mod vec3;
 
 fn ray_color(r: Ray, world: &HittableList) -> Color {
     let mut rec = HitRecord::default();
 
-    if world.hit(r, 0.0, f64::INFINITY, &mut rec) {
+    if world.hit(r, Interval::new(0.0, f64::INFINITY), &mut rec) {
         return 0.5 * (rec.normal + Color::new(1.0, 1.0, 1.0));
     }
 

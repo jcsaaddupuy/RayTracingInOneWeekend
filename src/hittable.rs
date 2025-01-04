@@ -1,4 +1,5 @@
 use crate::{
+    interval::Interval,
     ray::Ray,
     vec3::{Point3, Vec3},
 };
@@ -25,18 +26,5 @@ impl HitRecord {
 }
 
 pub trait Hittable {
-    fn hit(&self, r: Ray, ray_tmin: f64, ray_tmax: f64, rec: &mut HitRecord) -> bool;
+    fn hit(&self, r: Ray, ray_t: Interval, rec: &mut HitRecord) -> bool;
 }
-
-// #[cfg(test)]
-// mod tests {
-//     // Note this useful idiom: importing names from outer (for mod tests) scope.
-//     use super::*;
-
-//     // #[test]
-//     // fn test_new() {
-//     //     let hc = HitRecord::default();
-//     //     hc.front_face()
-
-//     // }
-// }
