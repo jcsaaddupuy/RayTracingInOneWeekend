@@ -24,7 +24,15 @@ fn main() {
     let image_width: i32 = 400;
     let samples_per_pixel = 100;
 
-    let camera = Camera::new(image_width, aspect_ratio, samples_per_pixel, 50, 20);
+    let camera = Camera::new(
+        image_width,
+        aspect_ratio,
+        samples_per_pixel,
+        50,
+        20,
+        10.0,
+        3.4,
+    );
 
     //World
     let mut world = HittableList::new();
@@ -39,6 +47,7 @@ fn main() {
         100.0,
         material_ground,
     ));
+    
     world.add(Sphere::new(
         Point3::new(0.0, 0.0, -1.2),
         0.5,

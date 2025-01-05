@@ -84,6 +84,17 @@ impl Vec3 {
         -on_unit_sphere
     }
 
+    pub fn random_in_unit_disk() -> Vec3 {
+        let mut ret: Vec3;
+        loop {
+            ret = Vec3::new(random_f64(), random_f64(), 0.0);
+            if ret.length_squared() < 1.0 {
+                break;
+            }
+        }
+        return ret;
+    }
+
     pub fn near_zero(self) -> bool {
         // Return true if the vector is close to zero in all dimensions.
         let s = 1e-8;
