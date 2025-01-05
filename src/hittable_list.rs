@@ -1,8 +1,7 @@
 use crate::hittable::{HitRecord, Hittable};
 use crate::interval::Interval;
-// #[derive(Copy, Clone, Default)]
+
 pub struct HittableList {
-    // objects: Vec<Box<dyn Hittable>>,
     objects: Vec<Box<dyn Hittable>>,
 }
 
