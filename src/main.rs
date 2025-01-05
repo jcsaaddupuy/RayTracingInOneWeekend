@@ -4,7 +4,7 @@ use hittable_list::HittableList;
 use log::info;
 use material::{Dielectric, Lambertian, Metal};
 use sphere::Sphere;
-use vec3::Point3;
+use vec3::{Point3, Vec3};
 
 mod camera;
 mod color;
@@ -22,9 +22,9 @@ fn main() {
 
     let aspect_ratio = 16.0 / 9.0;
     let image_width: i32 = 400;
-    let samples_per_pixel = 10;
+    let samples_per_pixel = 100;
 
-    let camera = Camera::new(image_width, aspect_ratio, samples_per_pixel);
+    let camera = Camera::new(image_width, aspect_ratio, samples_per_pixel, 50, 20);
 
     //World
     let mut world = HittableList::new();
