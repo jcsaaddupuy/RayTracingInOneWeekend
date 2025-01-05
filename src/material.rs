@@ -45,3 +45,36 @@ impl Material for Metal {
         return None;
     }
 }
+
+pub struct Dielectric {
+    refraction_index: f64,
+}
+impl Dielectric {
+    pub fn new(refraction_index: f64) -> Self {
+        Dielectric { refraction_index }
+    }
+}
+impl Material for Dielectric {
+    fn scatter(&self, r_in: &Ray, rec: &HitRecord) -> Option<(Ray, Color)> {
+        let attenuation = Color::new(1.0, 1.0, 1.0);
+        let mut ri = self.refraction_index;
+        if rec.front_face {
+            ri = (1.0 / self.refraction_index);
+        };
+
+        let unit_direction = r_in.direction().unit();
+
+        let cos_theta = f64::min(-unit_direction.dot(rec.normal), 1.0);
+        let sin_theta = f64::sqrt(1.0 - cos_theta * cos_theta);
+
+        let cannot_refract = ri * sin_theta > 1.0;
+        let mut direction = unit_direction.refract(rec.normal, ri);
+
+        if cannot_refract {
+            direction = unit_direction.reflect(rec.normal);
+        }
+
+        let scattered: Ray = Ray::new(rec.p, direction);
+        return Some((scattered, attenuation));
+    }
+}
