@@ -1,4 +1,4 @@
-use crate::{color::Color, hittable::HitRecord, ray::Ray, vec3::Vec3};
+use crate::{color::Color, hittable::HitRecord, ray::Ray, rtweekend::random_f64, vec3::Vec3};
 
 pub trait Material {
     fn scatter(&self, r_in: &Ray, rec: &HitRecord) -> Option<(Ray, Color)>;
@@ -53,6 +53,13 @@ impl Dielectric {
     pub fn new(refraction_index: f64) -> Self {
         Dielectric { refraction_index }
     }
+
+    pub fn reflectance(&self, cosine: f64, refraction_index: f64) -> f64 {
+        // Use Schlick's approximation for reflectance.
+        let mut r0 = (1.0 - refraction_index) / (1.0 + refraction_index);
+        r0 = r0 * r0;
+        return r0 + (1.0 - r0) * f64::powf((1.0 - cosine), 5.0);
+    }
 }
 impl Material for Dielectric {
     fn scatter(&self, r_in: &Ray, rec: &HitRecord) -> Option<(Ray, Color)> {
@@ -70,7 +77,7 @@ impl Material for Dielectric {
         let cannot_refract = ri * sin_theta > 1.0;
         let mut direction = unit_direction.refract(rec.normal, ri);
 
-        if cannot_refract {
+        if cannot_refract || self.reflectance(cos_theta, ri) > random_f64() {
             direction = unit_direction.reflect(rec.normal);
         }
 
