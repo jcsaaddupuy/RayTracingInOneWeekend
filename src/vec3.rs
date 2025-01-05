@@ -83,6 +83,17 @@ impl Vec3 {
         }
         -on_unit_sphere
     }
+
+    pub fn near_zero(self) -> bool {
+        // Return true if the vector is close to zero in all dimensions.
+        let s = 1e-8;
+        (f64::abs(self.e[0]) < s) && (f64::abs(self.e[1]) < s) && (f64::abs(self.e[2]) < s)
+    }
+
+    pub fn reflect(&self, normal: Vec3) -> Vec3 {
+        *self - self.dot(normal) * normal * 2_f64
+    }
+    
 }
 impl ops::Add<Vec3> for Vec3 {
     type Output = Vec3;

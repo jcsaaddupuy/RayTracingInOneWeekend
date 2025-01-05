@@ -4,7 +4,7 @@ use indicatif::ProgressBar;
 
 use crate::color;
 use crate::color::Color;
-use crate::hittable::{HitRecord, Hittable};
+use crate::hittable::Hittable;
 use crate::interval::Interval;
 use crate::ray::Ray;
 
@@ -71,11 +71,11 @@ impl Camera {
         if depth <= 0 {
             return Color::new(0.0, 0.0, 0.0);
         }
-        let mut rec: HitRecord = HitRecord::default();
 
-        if world.hit(r, Interval::new(0.001, f64::INFINITY), &mut rec) {
-            let direction = rec.normal + Vec3::random_unit();
-            return self.ray_color(Ray::new(rec.p, direction), world, depth - 1) * 0.1;
+        if let Some(rec) = world.hit(r, Interval::new(0.001, f64::INFINITY)) {
+            if let Some((scattered, attenuation)) = rec.material.scatter(&r, &rec) {
+                return attenuation * self.ray_color(scattered, world, depth - 1);
+            }
         }
 
         let unit_direction = r.direction().unit();
