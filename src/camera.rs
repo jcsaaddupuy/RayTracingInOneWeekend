@@ -1,4 +1,5 @@
 use core::f64;
+use std::sync::Arc;
 
 use indicatif::ProgressBar;
 
@@ -11,6 +12,8 @@ use crate::ray::Ray;
 use crate::rtweekend::{degrees_to_radians, random_f64};
 use crate::vec3::{Point3, Vec3};
 use log::info;
+use std::thread;
+use threadpool::ThreadPool;
 
 pub struct Camera {
     pub image_width: i32,       // Rendered image width in pixel count
@@ -40,6 +43,9 @@ pub struct Camera {
     defocus_disk_v: Vec3, // Defocus disk vertical radius
 }
 
+unsafe impl Sync for Camera {}
+// unsafe impl Send for Camera {}
+
 impl Camera {
     pub fn new(
         image_width: i32,
@@ -49,16 +55,10 @@ impl Camera {
         vfov: i32,
         defocus_angle: f64,
         focus_dist: f64,
+        lookfrom: Vec3,
+        lookat: Vec3,
+        vup: Vec3,
     ) -> Self {
-        //
-        // let lookfrom = Point3::new(0.0, 0.0, 0.0); // Point camera is looking from
-        // let lookat = Point3::new(0.0, 0.0, -1.0); // Point camera is looking at
-        // let vup = Vec3::new(0.0, 1.0, 0.0); // Camera-relative "up" direction
-
-        let lookfrom = Point3::new(-2.0, 2.0, 1.0);
-        let lookat = Point3::new(0.0, 0.0, -1.0);
-        let vup = Vec3::new(0.0, 1.0, 0.0);
-
         // Calculate the image height, and ensure that it's at least 1.
         let mut image_height = (image_width as f64 / aspect_ratio) as i32;
         if image_height < 1 {
@@ -78,8 +78,6 @@ impl Camera {
         info!("viewport_height: {:?}", viewport_height);
 
         let viewport_width = viewport_height * (image_width as f64 / image_height as f64);
-
-        // Calculate the vectors across the horizontal and down the vertical viewport edges.
 
         // Calculate the u,v,w unit basis vectors for the camera coordinate frame.
         let w = Vec3::unit(lookfrom - lookat);
@@ -141,7 +139,9 @@ impl Camera {
     }
 
     pub fn render<T: Hittable>(&self, world: &T) {
-        let bar = ProgressBar::new((self.image_width * self.image_height) as u64);
+        let bar = Arc::new(ProgressBar::new(
+            (self.image_width * self.image_height) as u64,
+        ));
 
         print!("P3\n{} {}\n255\n", self.image_width, self.image_height);
 
@@ -154,10 +154,10 @@ impl Camera {
                     pixel_color += self.ray_color(r, world, self.max_depth);
                 }
                 color::write_color(self.pixel_samples_scale * pixel_color);
-
                 bar.inc(1);
             }
         }
+
         bar.finish();
     }
 
